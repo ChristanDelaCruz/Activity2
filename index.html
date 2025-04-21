@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 50px;
+    }
+    .login-box {
+      width: 300px;
+      margin: 0 auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .message {
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginBtn" onclick="handleLogin()">Login</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const CORRECT_USERNAME = "user";
+    const CORRECT_PASSWORD = "pass123";
+    let attempts = 0;
+    const maxAttempts = 5;
+    const cooldownSeconds = 30;
+    let cooldownTimer;
+
+    function handleLogin() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      const messageDiv = document.getElementById("message");
+
+      if (user === CORRECT_USERNAME && pass === CORRECT_PASSWORD) {
+        messageDiv.style.color = "green";
+        messageDiv.textContent = "Login successful!";
+        attempts = 0;
+      } else {
+        attempts++;
+        messageDiv.style.color = "red";
+        if (attempts >= maxAttempts) {
+          messageDiv.textContent = `Too many attempts. Try again in ${cooldownSeconds} seconds.`;
+          document.getElementById("loginBtn").disabled = true;
+          startCooldown();
+        } else {
+          messageDiv.textContent = `Incorrect credentials. Attempts left: ${maxAttempts - attempts}`;
+        }
+      }
+    }
+
+    function startCooldown() {
+      let secondsLeft = cooldownSeconds;
+      const messageDiv = document.getElementById("message");
+
+      cooldownTimer = setInterval(() => {
+        secondsLeft--;
+        messageDiv.textContent = `Too many attempts. Try again in ${secondsLeft} second${secondsLeft !== 1 ? 's' : ''}.`;
+
+        if (secondsLeft <= 0) {
+          clearInterval(cooldownTimer);
+          attempts = 0;
+          document.getElementById("loginBtn").disabled = false;
+          messageDiv.textContent = "";
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
